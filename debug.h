@@ -4,8 +4,8 @@
 
 #define DETECT_RED  //红色检测，不启用默认为蓝色检测
 
-#define IGNORE_ENGINEER             //是否忽略工程
-#define IGNORE_NPC                  //是否忽略建筑物与哨兵
+//#define IGNORE_ENGINEER             //是否忽略工程
+//#define IGNORE_NPC                  //是否忽略建筑物与哨兵
 
 //FIXME: RECORD_DATA未完成
 // #define SAVE_VIDEO               // Save video
@@ -22,8 +22,8 @@
 //                              硬件设备选项
 //---------------------------------------------------------------------------//
 
-// #define USING_DAHENG                //是否使用大恒摄像头，不启用默认为USB摄像头
-#define USING_HIK                   //是否使用海康摄像头
+#define USING_DAHENG                //是否使用大恒摄像头，不启用默认为USB摄像头
+//#define USING_HIK                   //是否使用海康摄像头
 // #define USING_VIDEO              // Using video
 // #define USING_USB_CAMERA
 // #define USE_SAVED_DATA

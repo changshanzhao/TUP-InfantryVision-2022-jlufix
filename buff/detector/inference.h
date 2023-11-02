@@ -1,51 +1,45 @@
+//
+// Created by shaobing2 on 8/24/23.
+//
 
-#include "../../debug.h"
+#ifndef WIND_INFERENCE_INFERENCE_H
+#define WIND_INFERENCE_INFERENCE_H
 
-#include <iterator>
-#include <memory>
-#include <string>
-#include <vector>
-#include <iostream>
-
-#include <inference_engine.hpp>
+#include <opencv2/dnn.hpp>
+#include <openvino/openvino.hpp>
 #include <opencv2/opencv.hpp>
-#include <Eigen/Core>
-
-#include "../../general/general.h"
-
 using namespace std;
-using namespace cv;
-using namespace InferenceEngine;
+
 
 struct BuffObject
 {
-    Point2f apex[5];
-    cv::Rect_<float> rect;
     int cls;
     int color;
     float prob;
-    std::vector<cv::Point2f> pts;
+    cv::Point2f apex[5];
+    cv::Rect rect;
+};
+
+struct Resize
+{
+    cv::Mat resized_image;
+    int dw;
+    int dh;
 };
 
 class BuffDetector
 {
-
-private:
-    Core ie;
-    CNNNetwork network;                // 网络
-    ExecutableNetwork executable_network;       // 可执行网络
-    InferRequest infer_request;      // 推理请求
-    MemoryBlob::CPtr moutput;
-    string input_name;
-    string output_name;
-    
-    Eigen::Matrix<float,3,3> transfrom_matrix;
-
 public:
-    BuffDetector();
-    ~BuffDetector();
 
-    bool detect(Mat &src,vector<BuffObject>& objects);
+    bool detect(cv::Mat &src,vector<BuffObject>& output);
     bool initModel(string path);
 
+private:
+    ov::Core core;
+    std::shared_ptr<ov::Model> model;
+    ov::CompiledModel compiled_model;
+    ov::InferRequest infer_request;
 };
+
+
+#endif //WIND_INFERENCE_INFERENCE_H

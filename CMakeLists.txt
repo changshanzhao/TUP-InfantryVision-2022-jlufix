@@ -5,9 +5,10 @@ set(CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR})
 set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -Os -pthread -g")
 # set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} --std=c++17 -pthread")
 find_package(OpenCV 4.5.0)
-set(CMAKE_PREFIX_PATH /opt/intel/openvino_2021/deployment_tools/inference_engine/share)
+set(CMAKE_PREFIX_PATH /opt/intel/openvino_2023.0.1/runtime/cmake)
+#set(CMAKE_PREFIX_PATH /opt/intel/openvino_2021/deployment_tools/ngraph/cmake)
 find_package(InferenceEngine REQUIRED)
-# set(CMAKE_PREFIX_PATH /opt/intel/openvino_2021/deployment_tools/ngraph/cmake)
+
 # find_package(ngraph)
 find_package(Eigen3 REQUIRED)
 find_package(yaml-cpp REQUIRED)
@@ -64,7 +65,7 @@ add_executable(Infantry_Vision main.cpp
             ${PROJECT_SOURCE_DIR}/serial/wt61pc.h
             ${PROJECT_SOURCE_DIR}/serial/CRC_Check.cpp
             ${PROJECT_SOURCE_DIR}/serial/CRC_Check.h
-            ${PROJECT_SOURCE_DIR}/hik_camera/HaiKangCamera.cpp
+#[[            ${PROJECT_SOURCE_DIR}/hik_camera/HaiKangCamera.cpp]]
 )
 
 # add_executable(autoaim autoaim.cpp
@@ -80,9 +81,9 @@ add_executable(Infantry_Vision main.cpp
 target_link_libraries(Infantry_Vision ${OpenCV_LIBRARIES} ${InferenceEngine_LIBRARIES} ${Eigen3_LIBRARIES}
                          yaml-cpp gxiapi Ceres::ceres fmt::fmt glog matplotlib_cpp::matplotlib_cpp)
 
-# 包含海康相机动态链接库
+#[[# 包含海康相机动态链接库
 find_library(MVS_LIB libMvCameraControl.so /opt/MVS/lib/64/)
-target_link_libraries(Infantry_Vision ${MVS_LIB})
+target_link_libraries(Infantry_Vision ${MVS_LIB})]]
 
 # set(LINK_DIR /opt/intel/openvino_2021/deployment_tools/inference_engine/lib/intel64)
 
