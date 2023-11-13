@@ -8,6 +8,7 @@ const string path_prefix = "../dataset/";
 #endif //ASSIST_LABEL
 
 
+
 Buff::Buff()
 {
     detector.initModel(network_path);

@@ -4,13 +4,13 @@
 
 #define DETECT_RED  //红色检测，不启用默认为蓝色检测
 
-//#define IGNORE_ENGINEER             //是否忽略工程
+#define IGNORE_ENGINEER             //是否忽略工程
 //#define IGNORE_NPC                  //是否忽略建筑物与哨兵
 
 //FIXME: RECORD_DATA未完成
 // #define SAVE_VIDEO               // Save video
 // #define RECORD_DATA
-#define SAVE_LOG_ALL                // Save log
+//#define SAVE_LOG_ALL                // Save log
 
 
 // #TODO: 开启此选项请关闭无串口调试模式
@@ -36,7 +36,7 @@
 //                              图像DEBUG相关选项
 //---------------------------------------------------------------------------//
 
-// #define SHOW_INPUT      //显示送入神经网络的图像
+ #define SHOW_INPUT      //显示送入神经网络的图像
 
 #define SHOW_IMG        //是否显示检测Armor后的图像
 //===========================================================================//+

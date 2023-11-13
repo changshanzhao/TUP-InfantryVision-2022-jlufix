@@ -8,6 +8,9 @@
 #include <opencv2/dnn.hpp>
 #include <openvino/openvino.hpp>
 #include <opencv2/opencv.hpp>
+#include <Eigen/Core>
+#include "../../debug.h"
+
 using namespace std;
 
 
@@ -20,12 +23,6 @@ struct BuffObject
     cv::Rect rect;
 };
 
-struct Resize
-{
-    cv::Mat resized_image;
-    int dw;
-    int dh;
-};
 
 class BuffDetector
 {
@@ -33,12 +30,15 @@ public:
 
     bool detect(cv::Mat &src,vector<BuffObject>& output);
     bool initModel(string path);
+    cv::Mat scaledResize(cv::Mat& img);
 
 private:
     ov::Core core;
     std::shared_ptr<ov::Model> model;
     ov::CompiledModel compiled_model;
     ov::InferRequest infer_request;
+    Eigen::Matrix<float,3,3> transfrom_matrix;
+
 };
 
 

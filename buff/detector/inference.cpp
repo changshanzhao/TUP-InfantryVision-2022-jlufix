@@ -3,7 +3,6 @@
 //
 
 #include "inference.h"
-#define SHOW_BUFF
 static constexpr int INPUT_W = 640;
 static constexpr int INPUT_H = 640;
 static constexpr float SCORE_THRESHOLD = 0.2;
@@ -43,22 +42,31 @@ T reduce_min(T x, Ts... xs) {
     return reduce([](auto &&a, auto &&b){return std::min(a, b);}, x, xs...);
 }
 
-Resize resize_and_pad(cv::Mat& img, cv::Size new_shape) {
-    float width = img.cols;
-    float height = img.rows;
-    auto r = float(new_shape.width / max(width, height));
-    int new_unpadW = int(round(width * r));
-    int new_unpadH = int(round(height * r));
-    Resize resize;
-    cv::resize(img, resize.resized_image, cv::Size(new_unpadW, new_unpadH), 0, 0, cv::INTER_AREA);
+inline cv::Mat BuffDetector::scaledResize(cv::Mat& img)
+{
+    float r = std::min(INPUT_W / (img.cols * 1.0), INPUT_H / (img.rows * 1.0));
 
-    resize.dw = new_shape.width - new_unpadW;
-    resize.dh = new_shape.height - new_unpadH;
-    cv::Scalar color = cv::Scalar(100, 100, 100);
-    cv::copyMakeBorder(resize.resized_image, resize.resized_image, 0, resize.dh, 0, resize.dw, cv::BORDER_CONSTANT, color);
+    int unpad_w = r * img.cols;
+    int unpad_h = r * img.rows;
 
-    return resize;
+    int dw = INPUT_W - unpad_w;
+    int dh = INPUT_H - unpad_h;
+
+    dw /= 2;
+    dh /= 2;
+
+    transfrom_matrix << 1.0 / r, 0, -dw / r,
+            0, 1.0 / r, -dh / r,
+            0, 0, 1;
+
+    cv::Mat re;
+    cv::resize(img, re, cv::Size(unpad_w,unpad_h));
+    cv::Mat out;
+    cv::copyMakeBorder(re, out, dh, dh, dw, dw, CV_HAL_BORDER_CONSTANT);
+
+    return out;
 }
+
 
 bool BuffDetector::initModel(std::string path) {
     model = core.read_model(path);
@@ -76,11 +84,17 @@ bool BuffDetector::initModel(std::string path) {
     // Embed above steps in the graph
     model = ppp.build();
     compiled_model = core.compile_model(model, "CPU");
+    return true;
 }
 
 bool BuffDetector::detect(cv::Mat &src, vector<BuffObject> &output) {
-    Resize res = resize_and_pad(src, cv::Size(INPUT_W, INPUT_H));
-    auto *input_data = (float *) res.resized_image.data;
+    cv::Mat pr_img = scaledResize(src);
+#ifdef SHOW_INPUT
+    cv::namedWindow("network_input",0);
+    imshow("network_input",pr_img);
+    cv::waitKey(1);
+#endif //SHOW_INPUT
+    auto *input_data = (float *) pr_img.data;
     ov::Tensor input_tensor = ov::Tensor(compiled_model.input().get_element_type(), compiled_model.input().get_shape(), input_data);
     ov::InferRequest infer_request = compiled_model.create_infer_request();
     infer_request.set_input_tensor(input_tensor);
@@ -121,41 +135,38 @@ bool BuffDetector::detect(cv::Mat &src, vector<BuffObject> &output) {
     cv::dnn::NMSBoxes(boxes, confidences, SCORE_THRESHOLD, NMS_THRESHOLD, nms_result);
     for (int idx : nms_result)
     {
+        if (cls[idx] == 0) continue;
         BuffObject result;
-        for(int i = 0; i < 5; i++) {
-            result.apex[i] = ppts[idx][i];
+        Eigen::Matrix<float,3,5> apex_norm;
+        Eigen::Matrix<float,3,5> apex_dst;
+
+        apex_norm << ppts[idx][0].x,ppts[idx][1].x,ppts[idx][2].x,ppts[idx][3].x,ppts[idx][4].x,
+                ppts[idx][0].y,ppts[idx][1].y,ppts[idx][2].y,ppts[idx][3].y,ppts[idx][4].y,
+                1,1,1,1,1;
+
+        apex_dst = transfrom_matrix * apex_norm;
+
+        for (int i = 0; i < 5; i++)
+        {
+            result.apex[i] = cv::Point2f(apex_dst(0,i),apex_dst(1,i));
         }
         result.prob = confidences[idx];
         result.rect = boxes[idx];
         result.color = color[idx];
-        result.cls = cls[idx];
+        if (cls[idx] == 1)
+        {
+            result.cls = 1;
+        }
+        else if (cls[idx] == 2)
+        {
+            result.cls = 0;
+        }
+
         output.push_back(result);
     }
     for(auto & ppt : ppts) {
         delete[] ppt;
     }
 
-    for (auto detection : output) {
-        auto ppt = detection.apex;
-        auto cls = detection.cls;
-        auto color = detection.color;
-        auto classId = color * 3 + cls;
-        float rx = (float) src.cols / (float) (res.resized_image.cols - res.dw);
-        float ry = (float) src.rows / (float) (res.resized_image.rows - res.dh);
-        for (int i = 0; i < 5; i++) {
-            ppt[i].x = rx * ppt[i].x;
-            ppt[i].y = ry * ppt[i].y;
-        }
-#ifdef SHOW_BUFF
-        line(src, ppt[0], ppt[1], cv::Scalar(0, 255, 0), 2);
-        line(src, ppt[1], ppt[2], cv::Scalar(0, 255, 0), 2);
-        line(src, ppt[2], ppt[3], cv::Scalar(0, 255, 0), 2);
-        line(src, ppt[3], ppt[4], cv::Scalar(0, 255, 0), 2);
-        line(src, ppt[4], ppt[0], cv::Scalar(0, 255, 0), 2);
-        putText(src, name[classId], ppt[0], 1, 1, cv::Scalar(0, 255, 0));
-        cv::namedWindow("network_input",0);
-        imshow("network_input",src);
-#endif
-    }
-
+    return true;
 }
