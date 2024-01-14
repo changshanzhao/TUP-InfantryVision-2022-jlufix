@@ -9,7 +9,6 @@ static constexpr float SCORE_THRESHOLD = 0.2;
 static constexpr float NMS_THRESHOLD = 0.4;
 static constexpr float CONFIDENCE_THRESHOLD = 0.4;
 
-static string name[6] = {"BR","BU","BA","RR","RU","RA"};
 static inline int argmax(const float *ptr, int len) {
     int max_arg = 0;
     for (int i = 1; i < len; i++) {
@@ -86,12 +85,18 @@ bool BuffDetector::initModel(std::string path) {
     compiled_model = core.compile_model(model, "CPU");
     return true;
 }
-
+long long name_index = 0;
 bool BuffDetector::detect(cv::Mat &src, vector<BuffObject> &output) {
     cv::Mat pr_img = scaledResize(src);
 #ifdef SHOW_INPUT
     cv::namedWindow("network_input",0);
     imshow("network_input",pr_img);
+#ifdef IMWRITE
+    name_index++;
+    if (name_index%100==0) {
+        imwrite("/home/bubing2/buffdata/" + to_string(name_index/100) + ".jpg", pr_img);
+    }
+#endif
     cv::waitKey(1);
 #endif //SHOW_INPUT
     auto *input_data = (float *) pr_img.data;
