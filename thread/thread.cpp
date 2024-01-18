@@ -201,6 +201,7 @@ bool producer(Factory<TaskData> &factory, MessageFilter<MCUData> &receive_factor
         MCUData mcu_status;
         if (!receive_factory.consume(mcu_status, src.timestamp))
             continue;
+
         src.quat = mcu_status.quat;
         src.mode = mcu_status.mode;
         src.bullet_speed = mcu_status.bullet_speed;
@@ -314,13 +315,12 @@ bool dataReceiver(SerialPort &serial, MessageFilter<MCUData> &receive_factory, s
         //若串口离线则跳过数据发送
         if (serial.need_init == true)
         {
-            // cout<<"offline..."<<endl;
+            cout<<"offline..."<<endl;
             usleep(5000);
             continue;
         }
         //数据读取不成功进行循环
-        while (!serial.get_Mode())
-            ;
+        while (!serial.get_Mode());
         auto time_cap = std::chrono::steady_clock::now();
         auto timestamp = (int)(std::chrono::duration<double,std::milli>(time_cap - time_start).count());
         // cout<<"Quat: "<<serial.quat[0]<<" "<<serial.quat[1]<<" "<<serial.quat[2]<<" "<<serial.quat[3]<<" "<<endl;

@@ -104,29 +104,25 @@ bool SerialPort::get_Mode()
 
     if (bytes == 0)
     {
-    //    cout << "缓冲区为空" << endl;
+/*        cout << "缓冲区为空" << endl;*/
         return false;
     }
     // bytes = read(fd, rdata, 49);
     bytes = read(fd, rdata, 50);
     // bytes = read(fd, rdata, 45);
-    // cout<<bytes<<endl;
 
-    if (rdata[0] == 0xA5 && Verify_CRC8_Check_Sum(rdata, 3))
+
+    if (rdata[0] == 0xA5)
     {
         mode = rdata[1];
-        getQuat(&rdata[3]);
-        getGyro(&rdata[19]);
-        getAcc(&rdata[31]);
-        getSpeed(&rdata[43]);
+        getQuat(&rdata[2]);
+        getGyro(&rdata[18]);
+        getAcc(&rdata[30]);
+        getSpeed(&rdata[42]);
+
         Verify_CRC16_Check_Sum(rdata,50);
         //TODO:接收下位机发送的弹速
     }
-    // mode = rdata[0];
-    // getQuat(&rdata[1]);
-    // getGyro(&rdata[17]);
-    // getAcc(&rdata[29]);
-    // getSpeed(&rdata[41]);
     return true;
 }
 
@@ -352,31 +348,27 @@ void SerialPort::TransformData(const VisionData &data)
     Tdata[0] = 0xA5;
 
     Tdata[1] = CmdID1;
-	Append_CRC8_Check_Sum(Tdata, 3);
 
-    Tdata[3] = data.pitch_angle.c[0];
-    Tdata[4] = data.pitch_angle.c[1];
-    Tdata[5] = data.pitch_angle.c[2];
-    Tdata[6] = data.pitch_angle.c[3];
+    Tdata[2] = data.pitch_angle.c[0];
+    Tdata[3] = data.pitch_angle.c[1];
+    Tdata[4] = data.pitch_angle.c[2];
+    Tdata[5] = data.pitch_angle.c[3];
 
-    Tdata[7] = data.yaw_angle.c[0];
-    Tdata[8] = data.yaw_angle.c[1];
-    Tdata[9] = data.yaw_angle.c[2];
-    Tdata[10] = data.yaw_angle.c[3];
+    Tdata[6] = data.yaw_angle.c[0];
+    Tdata[7] = data.yaw_angle.c[1];
+    Tdata[8] = data.yaw_angle.c[2];
+    Tdata[9] = data.yaw_angle.c[3];
 
-    Tdata[11] = data.dis.c[0];
-    Tdata[12] = data.dis.c[1];
-    Tdata[13] = data.dis.c[2];
-    Tdata[14] = data.dis.c[3];
+    Tdata[10] = data.dis.c[0];
+    Tdata[11] = data.dis.c[1];
+    Tdata[12] = data.dis.c[2];
+    Tdata[13] = data.dis.c[3];
 
-    Tdata[15] = data.isSwitched;
-	Tdata[16] = data.isFindTarget;
+    Tdata[14] = data.isSwitched;
+	Tdata[15] = data.isFindTarget;
 
-    Tdata[17] = data.isSpinning;
-    Tdata[18] = data.ismiddle;
-    Tdata[19] = 0x00;
-
-	Append_CRC16_Check_Sum(Tdata, 22);
+    Tdata[16] = data.isSpinning;
+    Tdata[17] = data.ismiddle;
 
 }
 

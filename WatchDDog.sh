@@ -1,11 +1,11 @@
 #!/bin/bash 
 
-source /opt/intel/openvino_2021/bin/setupvars.sh
+source /opt/intel/openvino_2023.0.1/setupvars.sh
 sec=2 
 cnt=0 
-name=TUP-InfantryVision-2022-main
+name=TUP-InfantryVision-2022-jlufix
 program_name=Infantry_Vision
-cd /home/tup/Desktop/$name/build/
+cd /home/bubing2/桌面/$name/build/
 #make clean && 
 make -j6 
 while [ 1 ] 
@@ -18,7 +18,7 @@ do
         sleep $sec 
     else  
         echo "Starting $name..." 
-        gnome-terminal -- bash -c "cd /home/tup/Desktop/$program_name/build/;
+        gnome-terminal -- bash -c "cd /home/bubing2/桌面/$name/build/;
         ./$program_name;exec bash;" 
         echo "$name has started!"   
         ((cnt=cnt+1)) 
