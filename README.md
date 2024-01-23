@@ -1,5 +1,5 @@
 # TUP-InfantryVision-2022
-沈阳航空航天大学T-UP战队2022赛季步兵视觉识别程序.
+基于沈阳航空航天大学T-UP战队2022赛季步兵视觉识别程序，更改为吉林大学buff神经网络识别模型.
 ## Author:顾昊 赵梓合
 ## Version: V1.1 Beta
 ***Per Aspera Ad Astra.***    
