@@ -1,7 +1,7 @@
 # TUP-InfantryVision-2022-jlufix
-基于沈阳航空航天大学T-UP战队2022赛季步兵视觉识别程序，更改为吉林大学buff神经网络识别模型.
+基于沈阳航空航天大学T-UP战队2022赛季步兵视觉识别程序，更改为吉林大学buff神经网络识别模型(上车跑通版本)
 ## Author:顾昊 赵梓合
-## Version: V1.1 Beta
+## Version: V1.2
 ***Per Aspera Ad Astra.***    
 <img src="docs/tup_badge_vision.png" width="200px">
 
@@ -38,8 +38,8 @@
 
 - Ubuntu 20.04 LTS
 - GCC 9.3.0
-- OpenVINO 2021.4
-- OpenCV 4.5.0 安装方式：OpenVINO2021.4自带(注意: OpenCV4.5.0修改了minAreaRect的角度计算方式,如执意使用更早的版本请自行修改程序相关部分!!!)
+- OpenVINO 2023.1
+- OpenCV 4.5.0 安装方式：OpenVINO2023.1自带(注意: OpenCV4.5.0修改了minAreaRect的角度计算方式,如执意使用更早的版本请自行修改程序相关部分!!!)
 - Eigen 安装方式：`sudo apt-get install libeigen3-dev`
 - fmt 安装方式：[编译安装](https://github.com/fmtlib/fmt)
 - Glog 安装方式：[编译安装](https://github.com/google/glog/releases/tag/v0.5.0)
@@ -73,6 +73,8 @@
     
 ## 4.其他
 ### 更新记录
+V1.2 更新大风车模型 2023.1.1
+
 V1.1 改进预测器,优化UI 2022.6.3
 
 V1.0 合并更新debug.h，优化输出，添加日志记录，优化相机驱动，解耦串口，增加小陀螺判断，修复USB相机调用bug	
