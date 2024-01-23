@@ -335,7 +335,8 @@ bool Autoaim::run(TaskData &src,VisionData &data)
 #ifdef USING_IMU
     Eigen::Matrix3d rmat_imu = src.quat.toRotationMatrix();
     auto vec = rotationMatrixToEulerAngles(rmat_imu);
-    // cout<<"Euler : "<<vec[0] * 180.f / CV_PI<<" "<<vec[1] * 180.f / CV_PI<<" "<<vec[2] * 180.f / CV_PI<<endl;
+    cout<<"Euler : yaw:"<<vec[0] <<" pitch:"<<vec[1] <<endl;
+    //cout << rmat_imu<<endl;
 #else
     Eigen::Matrix3d rmat_imu = Eigen::Matrix3d::Identity();
 #endif //USING_IMU
@@ -1055,8 +1056,8 @@ bool Autoaim::run(TaskData &src,VisionData &data)
     // cout<<endl;
 #ifdef PRINT_TARGET_INFO
     fmt::print(fmt::fg(fmt::color::gray), "-----------INFO------------\n");
-    fmt::print(fmt::fg(fmt::color::blue_violet), "Yaw: {} \n",angle[0]);
-    fmt::print(fmt::fg(fmt::color::golden_rod), "Pitch: {} \n",angle[1]);
+    fmt::print(fmt::fg(fmt::color::blue_violet), "Yaw: {} \n",angle[1]);
+    fmt::print(fmt::fg(fmt::color::golden_rod), "Pitch: {} \n",angle[0]);
     fmt::print(fmt::fg(fmt::color::green_yellow), "Dist: {} m\n",(float)target.center3d_cam.norm());
     fmt::print(fmt::fg(fmt::color::white), "Target: {} \n",target.key);
     fmt::print(fmt::fg(fmt::color::white), "Target Type: {} \n",target.type == SMALL ? "SMALL" : "BIG");
@@ -1077,6 +1078,7 @@ bool Autoaim::run(TaskData &src,VisionData &data)
         return false;
     }
 
-    data = {(float)angle[1], (float)angle[0], (float)target.center3d_cam.norm(), is_target_switched, 1, is_target_spinning, 0};
+    data = {(float)(-angle[1]+vec[1]*180/M_PI), (float)(angle[0]+vec[0]*180/M_PI), (float)target.center3d_cam.norm(), is_target_switched, 1, is_target_spinning, 0};
+
     return true;
 }

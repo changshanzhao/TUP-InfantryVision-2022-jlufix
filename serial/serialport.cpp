@@ -370,6 +370,7 @@ void SerialPort::TransformData(const VisionData &data)
     Tdata[16] = data.isSpinning;
     Tdata[17] = data.ismiddle;
 
+
 }
 
 /////////////////////////////////////////////

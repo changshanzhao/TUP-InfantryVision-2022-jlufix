@@ -318,7 +318,7 @@ ArmorPredictor::PredictStatus ArmorPredictor::predict_fitting_run(Vector3d &resu
     
     for (auto target_info : history_info)
     {
-        cout<<"T : "<<target_info.timestamp / 1e3<<" X:"<<target_info.xyz[0]<<" Y:"<<target_info.xyz[1]<<endl;
+        //cout<<"T : "<<target_info.timestamp / 1e3<<" X:"<<target_info.xyz[0]<<" Y:"<<target_info.xyz[1]<<endl;
         problem_x.AddResidualBlock (     // 向问题中添加误差项
         // 使用自动求导，模板参数：误差类型，输出维度，输入维度，维数要与前面struct中一致
             new ceres::AutoDiffCostFunction<CURVE_FITTING_COST, 1, 2> ( 

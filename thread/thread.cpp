@@ -233,7 +233,7 @@ bool consumer(Factory<TaskData> &task_factory,Factory<VisionData> &transmit_fact
         mode = dst.mode;
         
 #ifdef DEBUG_WITHOUT_COM
-        mode = 1;
+        mode = 3;
         // dst.mode = mode;
 #endif // DEBUG_WITHOUT_COM
 

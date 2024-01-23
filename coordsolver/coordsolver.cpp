@@ -141,6 +141,8 @@ PnPInfo CoordSolver::pnp(const std::vector<Point2f> &points_pic, const Eigen::Ma
         result.armor_cam = tvec_eigen;
         result.armor_world = camToWorld(result.armor_cam, rmat_imu);
         result.euler = rotationMatrixToEulerAngles(rmat_eigen);
+//        cout<<"WORLD -----"<<result.armor_world[0]<<","<<result.armor_world[1]<<","<<result.armor_world[2]<<"---------end"<<endl;
+//        cout<<"CAM -----"<<result.armor_cam[0]<<","<<result.armor_cam[1]<<","<<result.armor_cam[2]<<"---------end"<<endl;
     }
     else
     {
